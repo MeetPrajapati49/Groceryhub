@@ -4,7 +4,8 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import authRoutes from './routes/authroutes.js'; 
-
+import wishlistRoutes from './routes/wishlist.js';
+import cartRoutes from './routes/cart.js';
 
 dotenv.config();
 
@@ -23,6 +24,8 @@ app.use(cors({
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/wishlist', wishlistRoutes);
+app.use('/api/cart', cartRoutes);
 
 // DB Connection
 mongoose.connect(process.env.MONGO_URI, {

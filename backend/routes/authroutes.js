@@ -1,99 +1,58 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
 const router = express.Router();
 
-// Register
+// register
 router.post('/register', async (req, res) => {
   try {
-    console.log('Registration attempt:', req.body);
-    
-    // Normalize email to lowercase
-    const email = req.body.email.toLowerCase();
-    const { name, phone, address, password } = req.body;
+    const { name, email, password } = req.body;
+    if (!email || !password) return res.status(400).json({ error: 'email & password required' });
 
-    // Check if user exists (case insensitive)
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      console.log('Registration failed - user exists');
-      return res.status(400).json({ message: 'User already exists' });
-    }
+    const exists = await User.findOne({ email });
+    if (exists) return res.status(409).json({ error: 'email already used' });
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-    
-    // Create user with normalized email
-    const user = new User({ 
-      name, 
-      email, 
-      phone, 
-      address, 
-      password: hashedPassword 
-    });
+    const passwordHash = await bcrypt.hash(password, 10);
+    const user = await User.create({ name, email, passwordHash });
 
-    await user.save();
-    console.log('User created:', { _id: user._id, email: user.email });
-    
-    res.status(201).json({ 
-      message: 'User registered successfully',
-      user: {
-        id: user._id,
-        email: user.email,
-        name: user.name
-      }
-    });
-
-  } catch (err) {
-    console.error('Registration error:', err);
-    res.status(500).json({ 
-      message: 'Registration failed',
-      error: err.message 
-    });
+    // auto-login
+    req.session.userId = user._id.toString();
+    res.json({ id: user._id, name: user.name, email: user.email });
+  } catch (e) {
+    res.status(500).json({ error: 'register failed' });
   }
 });
 
-// Login
+// login
 router.post('/login', async (req, res) => {
   try {
-    console.log('Raw login request:', req.body); // Debug log
-    
-    const email = req.body.email?.toLowerCase()?.trim(); // Double normalization
-    const { password } = req.body;
-
-    console.log('Searching for user with email:', email); // Debug log
-    
+    const { email, password } = req.body;
     const user = await User.findOne({ email });
-    console.log('Found user:', user); // Debug log
+    if (!user) return res.status(401).json({ error: 'invalid credentials' });
 
-    if (!user) {
-      console.log('No user found with email:', email); // Debug log
-      return res.status(404).json({ message: 'User not found' });
-    }
+    const ok = await bcrypt.compare(password, user.passwordHash);
+    if (!ok) return res.status(401).json({ error: 'invalid credentials' });
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '7d'
-    });
-
-    res.status(200).json({
-      message: 'Login successful',
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email
-      }
-    });
-  } catch (err) {
-    console.error('Login error:', err);
-    res.status(500).json({ message: 'Server error', error: err.message });
+    req.session.userId = user._id.toString();
+    res.json({ id: user._id, name: user.name, email: user.email });
+  } catch (e) {
+    res.status(500).json({ error: 'login failed' });
   }
+});
+
+// me
+router.get('/me', (req, res) => {
+  if (!req.session?.userId) return res.json(null);
+  res.json({ id: req.session.userId });
+});
+
+// logout
+router.post('/logout', (req, res) => {
+  req.session.destroy(() => {
+    res.clearCookie('sid');
+    res.json({ ok: true });
+  });
 });
 
 export default router;

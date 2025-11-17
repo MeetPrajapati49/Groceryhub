@@ -1,9 +1,21 @@
 {
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "bootstrap": "^5.3.8",
-    "mongoose": "^8.16.4"
+    "csv-parser": "^3.2.0",
+    "dotenv": "^17.2.3",
+    "lucide-react": "^0.548.0",
+    "mongoose": "^8.16.4",
+    "multer": "^2.0.2",
+    "react-dropzone": "^14.3.8",
+    "recharts": "^3.3.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "autoprefixer": "^10.4.21",
+    "nodemon": "^3.1.10",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.18"
   }
 }

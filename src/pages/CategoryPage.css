@@ -1,0 +1,286 @@
+/* CategoryPage Styles - Inspired by App.css for consistency */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: #f9fafb;
+  line-height: 1.6;
+}
+
+/* Top Banner - Matching homepage top bar but blue for delivery theme */
+.category-top-banner {
+  background: linear-gradient(to right, #1e40af, #1d4ed8, #3b82f6);
+  color: white;
+  font-size: 0.875rem;
+  padding: 0.5rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.category-top-banner .banner-left,
+.category-top-banner .banner-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.banner-sale {
+  background: #ef4444;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.25rem;
+  font-weight: 600;
+}
+
+/* Main Container */
+.category-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  background-color: #f9fafb;
+  min-height: 100vh;
+}
+
+/* Header Section with Go Back Button */
+.category-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.go-back-btn {
+  background: #f3f4f6;
+  color: #374151;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.go-back-btn:hover {
+  background: #e5e7eb;
+  color: #059669;
+}
+
+.category-title {
+  font-size: 2.25rem;
+  font-weight: bold;
+  color: #1f2937;
+  text-transform: capitalize;
+  margin: 0;
+}
+
+/* Search Bar - Matching homepage search */
+.category-search {
+  margin-bottom: 2rem;
+  max-width: 32rem;
+}
+
+.category-search-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.category-search-input:focus {
+  outline: none;
+  border-color: #fbbf24;
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
+}
+
+/* Products Grid - Matching product cards from homepage */
+.category-products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.category-product-card {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  transition: all 0.3s;
+  overflow: hidden;
+}
+
+.category-product-card:hover {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  transform: translateY(-4px);
+}
+
+.category-product-image {
+  width: 100%;
+  height: 12rem;
+  object-fit: cover;
+  border-radius: 0.75rem;
+  margin-bottom: 1rem;
+  transition: transform 0.3s;
+}
+
+.category-product-card:hover .category-product-image {
+  transform: scale(1.05);
+}
+
+.category-product-name {
+  font-size: 1.125rem;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.category-product-price {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #059669;
+  margin-bottom: 1rem;
+}
+
+/* Buttons - Matching add to cart and view buttons */
+.category-btn {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-bottom: 0.5rem;
+}
+
+.add-to-cart-btn {
+  background: linear-gradient(to right, #10b981, #059669);
+  color: white;
+}
+
+.add-to-cart-btn:hover {
+  background: linear-gradient(to right, #059669, #047857);
+}
+
+.view-product-btn {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.view-product-btn:hover {
+  background: #e5e7eb;
+  color: #059669;
+}
+
+/* No Products Message */
+.no-products {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+
+.no-products-text {
+  font-size: 1.25rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Loading State */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+}
+
+.loading-text {
+  font-size: 1.25rem;
+  color: #6b7280;
+}
+
+/* Error/Unknown Category */
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+}
+
+.error-text {
+  font-size: 1.25rem;
+  color: #6b7280;
+}
+
+/* Responsive Design - Matching homepage responsive */
+@media (max-width: 768px) {
+  .category-title {
+    font-size: 1.75rem;
+  }
+
+  .category-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .category-products-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .category-product-card {
+    padding: 1rem;
+  }
+
+  .category-top-banner {
+    font-size: 0.75rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .banner-right {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 0.5rem;
+  }
+
+  .category-products-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .category-search-input {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Scrollbar for any scrollable elements if needed */
+.category-products-grid::-webkit-scrollbar {
+  height: 6px;
+}
+
+.category-products-grid::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.category-products-grid::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.category-products-grid::-webkit-scrollbar-thumb:hover {
+  background: #9696b9;
+}

@@ -1,0 +1,85 @@
+:root{
+	--bg:#f8fafc;
+	--surface:#ffffff;
+	--muted:#6b7280;
+	--primary:#0ea5a4;
+	--accent:#7c3aed;
+	--border: #e6edf3;
+	--shadow: 0 8px 30px rgba(2,6,23,0.06);
+	--container:1200px;
+	--radius:8px;
+	--gap:16px;
+}
+
+/* Base layout */
+html,body{height:100%}
+body { font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin: 0; background:var(--bg); color:#0f172a }
+.container { max-width:var(--container); margin: 0 auto; padding: 0 16px; }
+
+/* Cards and forms */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px}
+.auth-container { max-width: 420px; margin: 48px auto; padding: 24px; background: var(--surface); border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+.auth-input { display:block; width:100%; padding:10px 12px; margin-bottom:12px; border:1px solid #e5e7eb; border-radius:8px }
+.auth-button { background:var(--primary); color:#fff; padding:10px 16px; border-radius:8px; border:none; cursor:pointer }
+.error-message { color:#dc2626; margin-top:8px }
+
+/* Header */
+.site-header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 0;margin-bottom:16px}
+.site-header .header-inner{display:flex;align-items:center;justify-content:space-between;gap:var(--gap)}
+.site-brand{display:flex;align-items:center;gap:12px;font-weight:700;color:var(--primary);text-decoration:none}
+.menu-btn{background:none;border:none;font-size:18px;cursor:pointer}
+.search-box{flex:1;max-width:640px;display:flex;align-items:center}
+.search-box input{flex:1;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px}
+.header-nav{display:flex;gap:12px;align-items:center}
+.account-btn{background:none;border:1px solid #e5e7eb;padding:6px 10px;border-radius:6px;cursor:pointer}
+.account-menu{position:absolute;right:0;top:40px;background:var(--surface);border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 8px 30px rgba(2,6,23,0.08);width:220px;padding:8px;z-index:40}
+
+/* Product cards */
+.product-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px;position:relative;overflow:hidden}
+.product-image{width:100%;height:200px;object-fit:cover;border-radius:8px}
+.product-info{padding:8px}
+.discount-badge{position:absolute;top:12px;left:12px;background:#ef4444;color:#fff;padding:6px 8px;border-radius:8px;font-size:12px}
+
+/* Grid used across pages (home, category, search) - global so all pages inherit it */
+.products-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.products-section .section-title, .categories-section .section-title{margin-bottom:12px}
+
+@media (max-width:1100px){
+	.products-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:700px){
+	.products-grid{grid-template-columns:repeat(1,1fr)}
+}
+
+@media (max-width:900px){
+	.product-card .product-image{height:140px}
+	.container{padding:0 12px}
+}
+
+/* Small helpers */
+.muted{color:var(--muted)}
+.btn-primary{background:var(--primary);color:#fff;padding:8px 12px;border-radius:8px;border:none}
+
+/* Product detail thumbnails and main image transitions */
+.main-image{width:100%;height:320px;object-fit:cover;border-radius:8px;transition:opacity .28s ease,transform .28s ease}
+.main-image.loading{opacity:.45;transform:scale(.995)}
+.thumb{width:64px;height:64px;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:transform .18s ease,box-shadow .18s ease}
+.thumb:hover{transform:translateY(-3px);box-shadow:0 8px 18px rgba(2,6,23,0.06)}
+.thumb.selected{border-color:var(--primary)}
+
+/* Header responsive behavior */
+@media (max-width:768px){
+	.site-header .header-inner{flex-direction:row;align-items:center}
+	.search-box{display:none}
+	.header-nav{display:none}
+	.site-header.open .header-nav{display:flex;flex-direction:column;position:absolute;left:0;right:0;top:64px;background:var(--surface);padding:12px;border-top:1px solid var(--border);box-shadow:0 8px 30px rgba(2,6,23,0.06)}
+	.site-header.open .search-box{display:block;padding:12px}
+	.site-brand{font-size:18px}
+}
+
+/* Footer responsive */
+@media (max-width:768px){
+	.footer .footer-grid{flex-direction:column;gap:12px}
+	.footer{padding:16px}
+}
+

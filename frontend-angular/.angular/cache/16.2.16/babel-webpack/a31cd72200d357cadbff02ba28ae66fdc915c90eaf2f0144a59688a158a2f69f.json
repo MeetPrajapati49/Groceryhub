@@ -1,0 +1,1 @@
+{"ast":null,"code":"export const environment = {\n  production: false,\n  // Use relative path so the dev server proxy (proxy.conf.json) forwards requests to the backend\n  apiUrl: '/api'\n};","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}

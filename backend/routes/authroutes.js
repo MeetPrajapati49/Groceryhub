@@ -18,9 +18,10 @@ router.post('/register', async (req, res) => {
 
     // auto-login
     req.session.userId = user._id.toString();
-    res.json({ id: user._id, name: user.name, email: user.email });
+    res.json({ user: { id: user._id, name: user.name, email: user.email } });
   } catch (e) {
-    res.status(500).json({ error: 'register failed' });
+    console.error('Register error:', e);
+    res.status(500).json({ error: 'register failed', details: e.message });
   }
 });
 
@@ -29,28 +30,43 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
-    if (!user) return res.status(401).json({ error: 'invalid credentials' });
+    if (!user || !user.passwordHash) return res.status(401).json({ error: 'invalid credentials' });
 
     const ok = await bcrypt.compare(password, user.passwordHash);
     if (!ok) return res.status(401).json({ error: 'invalid credentials' });
 
-    req.session.userId = user._id.toString();
-    res.json({ id: user._id, name: user.name, email: user.email });
+    req.session.regenerate((err) => {
+      if (err) {
+        console.error('Session regenerate error:', err);
+        res.status(500).json({ error: 'login failed' });
+      } else {
+        req.session.userId = user._id.toString();
+        console.log("Session after login:", req.session);
+        res.json({ user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+      }
+    });
   } catch (e) {
+    console.error('Login error:', e);
     res.status(500).json({ error: 'login failed' });
   }
 });
 
 // me
-router.get('/me', (req, res) => {
+router.get('/me', async (req, res) => {
   if (!req.session?.userId) return res.json(null);
-  res.json({ id: req.session.userId });
+  try {
+    const user = await User.findById(req.session.userId);
+    if (!user) return res.json(null);
+    res.json({ id: user._id, name: user.name, email: user.email, role: user.role });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to get user' });
+  }
 });
 
 // logout
 router.post('/logout', (req, res) => {
   req.session.destroy(() => {
-    res.clearCookie('sid');
+    res.clearCookie('connect.sid', { path: '/' });
     res.json({ ok: true });
   });
 });

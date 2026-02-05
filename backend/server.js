@@ -29,9 +29,10 @@ const allowedOrigins = [
   'http://localhost:3001',
   'http://localhost:4200',
   'http://127.0.0.1:4200',
-  // Production URLs
+  // Production URLs - Add your actual Vercel URL here
   'https://groceryhub.vercel.app',
   'https://groceryhub-meetprajapati49.vercel.app',
+  'https://groceryhub-baje-git-main-meetprajapati49s-projects.vercel.app',
   process.env.FRONTEND_URL
 ].filter(Boolean);
 
@@ -39,6 +40,8 @@ app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (like curl, Postman)
     if (!origin) return callback(null, true);
+    // Allow any vercel.app subdomain
+    if (origin.endsWith('.vercel.app')) return callback(null, true);
     if (allowedOrigins.indexOf(origin) !== -1) return callback(null, true);
     return callback(new Error('CORS policy: Origin not allowed'));
   },

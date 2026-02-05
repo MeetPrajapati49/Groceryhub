@@ -1,6 +1,6 @@
 export const environment = {
     production: true,
-    // Replace with your actual Render backend URL after deployment
-    apiUrl: 'https://groceryhub-api.onrender.com/api',
-    backendBase: 'https://groceryhub-api.onrender.com'
+    // Your deployed Render backend URL
+    apiUrl: 'https://groceryhub-gjxf.onrender.com/api',
+    backendBase: 'https://groceryhub-gjxf.onrender.com'
 };

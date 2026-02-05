@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --open --host 0.0.0.0 --port 4200 --proxy-config proxy.conf.json",
-    "build": "ng build --prod",
+    "build": "ng build --configuration=production",
     "test": "jest",
     "lint": "eslint ./src --ext .ts --report-unused-disable-directives --max-warnings=0",
     "type-check": "tsc -p tsconfig.app.json --noEmit"

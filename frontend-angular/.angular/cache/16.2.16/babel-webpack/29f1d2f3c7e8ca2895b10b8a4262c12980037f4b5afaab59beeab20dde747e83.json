@@ -1,0 +1,1 @@
+{"ast":null,"code":"export const environment = {\n  production: true,\n  // Your deployed Render backend URL\n  apiUrl: 'https://groceryhub-gjxf.onrender.com/api',\n  backendBase: 'https://groceryhub-gjxf.onrender.com'\n};","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}

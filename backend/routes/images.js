@@ -1,18 +1,38 @@
 import express from 'express';
 import multer from 'multer';
-// import sharp from 'sharp';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import Image from '../models/Image.js';
 import adminAuth from '../middleware/adminAuth.js';
 
+// Cloudinary imports - use if CLOUDINARY_CLOUD_NAME is set
+let cloudinaryStorage = null;
+let cloudinary = null;
+
+const useCloudinary = !!(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET);
+
+if (useCloudinary) {
+  try {
+    const cloudinaryModule = await import('cloudinary');
+    cloudinary = cloudinaryModule.v2;
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET
+    });
+    console.log('✅ Cloudinary configured successfully');
+  } catch (e) {
+    console.log('⚠️ Cloudinary not available, using local storage');
+  }
+}
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 
-// Ensure uploads directory exists
+// Ensure uploads directory exists (for local fallback)
 const uploadsDir = path.join(__dirname, '../uploads');
 const thumbnailsDir = path.join(uploadsDir, 'thumbnails');
 
@@ -23,7 +43,7 @@ if (!fs.existsSync(thumbnailsDir)) {
   fs.mkdirSync(thumbnailsDir, { recursive: true });
 }
 
-// Configure multer for memory storage (we'll process with Sharp)
+// Configure multer for memory storage
 const storage = multer.memoryStorage();
 const upload = multer({
   storage,
@@ -39,28 +59,6 @@ const upload = multer({
   }
 });
 
-import sharp from 'sharp';
-
-// Helper function to generate thumbnail
-async function generateThumbnail(buffer, width, height) {
-  return await sharp(buffer)
-    .resize(width, height, {
-      fit: 'inside',
-      withoutEnlargement: true
-    })
-    .jpeg({ quality: 80 })
-    .toBuffer();
-}
-
-// Helper function to get image dimensions
-async function getImageDimensions(buffer) {
-  const metadata = await sharp(buffer).metadata();
-  return {
-    width: metadata.width,
-    height: metadata.height
-  };
-}
-
 // POST /api/admin/images/upload - Upload single or multiple images
 router.post('/upload', adminAuth, upload.array('images', 10), async (req, res) => {
   try {
@@ -72,43 +70,74 @@ router.post('/upload', adminAuth, upload.array('images', 10), async (req, res) =
     const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
 
     for (const file of req.files) {
-      // Generate unique filename
-      const timestamp = Date.now();
-      const random = Math.random().toString(36).substring(2, 15);
-      const extension = path.extname(file.originalname).toLowerCase();
-      const filename = `${timestamp}-${random}${extension}`;
+      let imageUrl = '';
+      let thumbnails = [];
+      let filename = '';
 
-      // Get original dimensions
-      const dimensions = await getImageDimensions(file.buffer);
+      // Use Cloudinary if available
+      if (useCloudinary && cloudinary) {
+        try {
+          // Upload to Cloudinary
+          const uploadResult = await new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(
+              {
+                folder: 'groceryhub',
+                transformation: [
+                  { width: 800, height: 800, crop: 'limit', quality: 'auto' }
+                ]
+              },
+              (error, result) => {
+                if (error) reject(error);
+                else resolve(result);
+              }
+            );
+            uploadStream.end(file.buffer);
+          });
 
-      // Save original image
-      const originalPath = path.join(uploadsDir, filename);
-      await fs.promises.writeFile(originalPath, file.buffer);
+          imageUrl = uploadResult.secure_url;
+          filename = uploadResult.public_id;
 
-      // Generate thumbnails
-      const thumbnails = [];
-      const thumbnailSizes = [
-        { size: 'small', width: 150, height: 150 },
-        { size: 'medium', width: 400, height: 400 },
-        { size: 'large', width: 800, height: 800 }
-      ];
+          // Create thumbnail URLs using Cloudinary transformations
+          thumbnails = [
+            {
+              size: 'small',
+              url: cloudinary.url(uploadResult.public_id, { width: 150, height: 150, crop: 'fill' }),
+              dimensions: { width: 150, height: 150 }
+            },
+            {
+              size: 'medium',
+              url: cloudinary.url(uploadResult.public_id, { width: 400, height: 400, crop: 'fill' }),
+              dimensions: { width: 400, height: 400 }
+            },
+            {
+              size: 'large',
+              url: cloudinary.url(uploadResult.public_id, { width: 800, height: 800, crop: 'limit' }),
+              dimensions: { width: 800, height: 800 }
+            }
+          ];
 
-      for (const size of thumbnailSizes) {
-        const thumbnailBuffer = await generateThumbnail(file.buffer, size.width, size.height);
-        const thumbnailFilename = `thumb-${size.size}-${filename}`;
-        const thumbnailPath = path.join(thumbnailsDir, thumbnailFilename);
+          console.log(`✅ Uploaded to Cloudinary: ${imageUrl}`);
+        } catch (cloudinaryError) {
+          console.error('Cloudinary upload failed:', cloudinaryError);
+          return res.status(500).json({ error: 'Image upload failed - Cloudinary error' });
+        }
+      } else {
+        // Fallback to local storage
+        const timestamp = Date.now();
+        const random = Math.random().toString(36).substring(2, 15);
+        const extension = path.extname(file.originalname).toLowerCase();
+        filename = `${timestamp}-${random}${extension}`;
 
-        await fs.promises.writeFile(thumbnailPath, thumbnailBuffer);
+        const originalPath = path.join(uploadsDir, filename);
+        await fs.promises.writeFile(originalPath, file.buffer);
 
-        thumbnails.push({
-          size: size.size,
-          path: `/uploads/thumbnails/${thumbnailFilename}`,
-          url: `${baseUrl}/uploads/thumbnails/${thumbnailFilename}`,
-          dimensions: {
-            width: size.width,
-            height: size.height
-          }
-        });
+        imageUrl = `${baseUrl}/uploads/${filename}`;
+
+        thumbnails = [
+          { size: 'small', url: imageUrl, dimensions: { width: 150, height: 150 } },
+          { size: 'medium', url: imageUrl, dimensions: { width: 400, height: 400 } },
+          { size: 'large', url: imageUrl, dimensions: { width: 800, height: 800 } }
+        ];
       }
 
       // Create database record
@@ -117,9 +146,9 @@ router.post('/upload', adminAuth, upload.array('images', 10), async (req, res) =
         originalName: file.originalname,
         mimetype: file.mimetype,
         size: file.size,
-        path: `/uploads/${filename}`,
-        url: `${baseUrl}/uploads/${filename}`,
-        dimensions,
+        path: useCloudinary ? imageUrl : `/uploads/${filename}`,
+        url: imageUrl,
+        dimensions: { width: 800, height: 800 },
         thumbnails,
         uploadedBy: req.session.userId,
         category: req.body.category || 'general',
@@ -141,6 +170,7 @@ router.post('/upload', adminAuth, upload.array('images', 10), async (req, res) =
     res.status(500).json({ error: 'Failed to upload images' });
   }
 });
+
 
 // GET /api/admin/images - Get images with pagination and filtering
 router.get('/', adminAuth, async (req, res) => {

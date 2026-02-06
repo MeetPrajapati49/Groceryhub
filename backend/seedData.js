@@ -1,13 +1,17 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import dotenv from 'dotenv';
 import User from './models/User.js';
 import Product from './models/Product.js';
 import Category from './models/Category.js';
 import Order from './models/Order.js';
 
+dotenv.config();
+
 async function seedData() {
   try {
-    await mongoose.connect('mongodb://localhost:27017/groceryhub');
+    const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/groceryhub';
+    await mongoose.connect(mongoUri);
     console.log('Connected to DB');
 
     // Clear existing data

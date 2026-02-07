@@ -28,7 +28,6 @@ import { AuthInterceptor } from './core/auth.interceptor';
 
 @NgModule({
   declarations: [
-    AppComponent,
     HomeComponent,
     LoginComponent,
     RegisterComponent,
@@ -44,8 +43,8 @@ import { AuthInterceptor } from './core/auth.interceptor';
     CategoryComponent,
     // admin orders
     AdminOrdersComponent
-    ,ProductDetailComponent
-    ,WishlistComponent
+    , ProductDetailComponent
+    , WishlistComponent
   ],
   imports: [
     BrowserModule,
@@ -54,7 +53,8 @@ import { AuthInterceptor } from './core/auth.interceptor';
     AppRoutingModule,
     RouterModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AppComponent
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }

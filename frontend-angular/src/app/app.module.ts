@@ -25,9 +25,11 @@ import { CategoryComponent } from './pages/category/category.component';
 import { WishlistComponent } from './pages/wishlist/wishlist.component';
 
 import { AuthInterceptor } from './core/auth.interceptor';
+import { ToastComponent } from './components/toast.component';
 
 @NgModule({
   declarations: [
+    AppComponent,
     HomeComponent,
     LoginComponent,
     RegisterComponent,
@@ -54,7 +56,7 @@ import { AuthInterceptor } from './core/auth.interceptor';
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
-    AppComponent
+    ToastComponent
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }

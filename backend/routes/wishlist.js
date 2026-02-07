@@ -1,15 +1,26 @@
 import express from 'express';
 import Wishlist from '../models/Wishlist.js';
+import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Add to wishlist
-router.post('/add', async (req, res) => {
-  const { userId, productId } = req.body;
+// Get wishlist (authenticated user)
+router.get('/', authMiddleware, async (req, res) => {
   try {
-    let wishlist = await Wishlist.findOne({ userId });
+    const wishlist = await Wishlist.findOne({ userId: req.userId }).populate('products');
+    res.json(wishlist || { products: [] });
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching wishlist', error: err.message });
+  }
+});
+
+// Add to wishlist
+router.post('/add', authMiddleware, async (req, res) => {
+  const { productId } = req.body;
+  try {
+    let wishlist = await Wishlist.findOne({ userId: req.userId });
     if (!wishlist) {
-      wishlist = new Wishlist({ userId, products: [productId] });
+      wishlist = new Wishlist({ userId: req.userId, products: [productId] });
     } else {
       if (!wishlist.products.includes(productId)) {
         wishlist.products.push(productId);
@@ -22,30 +33,21 @@ router.post('/add', async (req, res) => {
   }
 });
 
-// Get wishlist
-router.get('/:userId', async (req, res) => {
-  try {
-    const wishlist = await Wishlist.findOne({ userId: req.params.userId }).populate('products');
-    res.json(wishlist || { products: [] });
-  } catch (err) {
-    res.status(500).json({ message: 'Error fetching wishlist', error: err.message });
-  }
-});
-
 // Remove from wishlist
-router.delete('/:userId/:productId', async (req, res) => {
+router.delete('/:productId', authMiddleware, async (req, res) => {
   try {
-    const wishlist = await Wishlist.findOne({ userId: req.params.userId });
+    const wishlist = await Wishlist.findOne({ userId: req.userId });
     if (wishlist) {
       wishlist.products = wishlist.products.filter(
         (id) => id.toString() !== req.params.productId
       );
       await wishlist.save();
     }
-    res.json(wishlist);
+    res.json(wishlist || { products: [] });
   } catch (err) {
     res.status(500).json({ message: 'Error removing from wishlist', error: err.message });
   }
 });
 
 export default router;
+

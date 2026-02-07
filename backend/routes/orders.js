@@ -1,16 +1,8 @@
 import express from "express";
 import Order from "../models/Order.js";
-import adminAuth from "../middleware/adminAuth.js";
+import { authMiddleware, adminAuth } from "../middleware/auth.js";
 
 const router = express.Router();
-
-// Middleware to check if user is authenticated
-const authMiddleware = (req, res, next) => {
-  if (!req.session?.userId) {
-    return res.status(401).json({ error: 'Authentication required' });
-  }
-  next();
-};
 
 // GET all orders (admin only)
 router.get("/", adminAuth, async (req, res) => {
@@ -95,7 +87,7 @@ router.put("/:id/status", adminAuth, async (req, res) => {
 // GET user's orders (authenticated users)
 router.get("/my-orders", authMiddleware, async (req, res) => {
   try {
-    const orders = await Order.find({ userId: req.session.userId })
+    const orders = await Order.find({ userId: req.userId })
       .sort({ createdAt: -1 });
 
     res.json({
@@ -153,7 +145,7 @@ router.post("/", authMiddleware, async (req, res) => {
     }
 
     const order = await Order.create({
-      userId: req.session.userId,
+      userId: req.userId,
       items,
       totalAmount,
       deliveryAddress,
@@ -172,7 +164,7 @@ router.get("/my-orders/:id", authMiddleware, async (req, res) => {
   try {
     const order = await Order.findOne({
       _id: req.params.id,
-      userId: req.session.userId
+      userId: req.userId
     });
 
     if (!order) {

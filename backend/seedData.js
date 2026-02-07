@@ -57,19 +57,19 @@ async function seedData() {
     const createdUsers = await User.insertMany(users);
     console.log('Sample users created');
 
-    // Create products
+    // Create products with reliable image URLs
     const products = [
-      { name: 'Organic Tomatoes', price: 120, stock: 50, category: 'Vegetables', description: 'Fresh organic tomatoes', images: ['https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400'] },
-      { name: 'Fresh Milk', price: 60, stock: 30, category: 'Dairy', description: 'Fresh cow milk', images: ['https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400'] },
-      { name: 'Whole Wheat Bread', price: 45, stock: 25, category: 'Bakery', description: 'Healthy whole wheat bread', images: ['https://images.unsplash.com/photo-1549931319-a545dcf3bc73?w=400'] },
-      { name: 'Bananas', price: 80, stock: 40, category: 'Fruits', description: 'Fresh bananas', images: ['https://images.unsplash.com/photo-1571771019784-3ff35f4f4277?w=400'] },
-      { name: 'Chicken Breast', price: 250, stock: 15, category: 'Meat', description: 'Fresh chicken breast', images: ['https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=400'] },
-      { name: 'Spinach', price: 30, stock: 35, category: 'Vegetables', description: 'Fresh spinach leaves', images: ['https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=400'] },
-      { name: 'Cheddar Cheese', price: 180, stock: 20, category: 'Dairy', description: 'Aged cheddar cheese', images: ['https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=400'] },
-      { name: 'Croissants', price: 90, stock: 12, category: 'Bakery', description: 'Buttery croissants', images: ['https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400'] },
-      { name: 'Apples', price: 100, stock: 45, category: 'Fruits', description: 'Red delicious apples', images: ['https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400'] },
-      { name: 'Ground Beef', price: 300, stock: 10, category: 'Meat', description: 'Lean ground beef', images: ['https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=400'] },
-      { name: 'Honey', price: 150, stock: 25, category: 'Bakery', description: 'Pure natural honey', images: ['https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=400'] }
+      { name: 'Organic Tomatoes', price: 120, stock: 50, category: 'Vegetables', description: 'Fresh organic tomatoes', images: ['https://images.pexels.com/photos/1367242/pexels-photo-1367242.jpeg?auto=compress&cs=tinysrgb&w=400'] },
+      { name: 'Fresh Milk', price: 60, stock: 30, category: 'Dairy', description: 'Fresh cow milk', images: ['https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=400'] },
+      { name: 'Whole Wheat Bread', price: 45, stock: 25, category: 'Bakery', description: 'Healthy whole wheat bread', images: ['https://images.pexels.com/photos/1775043/pexels-photo-1775043.jpeg?auto=compress&cs=tinysrgb&w=400'] },
+      { name: 'Bananas', price: 80, stock: 40, category: 'Fruits', description: 'Fresh bananas', images: ['https://images.pexels.com/photos/2872755/pexels-photo-2872755.jpeg?auto=compress&cs=tinysrgb&w=400'] },
+      { name: 'Chicken Breast', price: 250, stock: 15, category: 'Meat', description: 'Fresh chicken breast', images: ['https://images.pexels.com/photos/616354/pexels-photo-616354.jpeg?auto=compress&cs=tinysrgb&w=400'] },
+      { name: 'Spinach', price: 30, stock: 35, category: 'Vegetables', description: 'Fresh spinach leaves', images: ['https://images.pexels.com/photos/2325843/pexels-photo-2325843.jpeg?auto=compress&cs=tinysrgb&w=400'] },
+      { name: 'Cheddar Cheese', price: 180, stock: 20, category: 'Dairy', description: 'Aged cheddar cheese', images: ['https://images.pexels.com/photos/821365/pexels-photo-821365.jpeg?auto=compress&cs=tinysrgb&w=400'] },
+      { name: 'Croissants', price: 90, stock: 12, category: 'Bakery', description: 'Buttery croissants', images: ['https://images.pexels.com/photos/3892469/pexels-photo-3892469.jpeg?auto=compress&cs=tinysrgb&w=400'] },
+      { name: 'Apples', price: 100, stock: 45, category: 'Fruits', description: 'Red delicious apples', images: ['https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg?auto=compress&cs=tinysrgb&w=400'] },
+      { name: 'Ground Beef', price: 300, stock: 10, category: 'Meat', description: 'Lean ground beef', images: ['https://images.pexels.com/photos/128401/pexels-photo-128401.jpeg?auto=compress&cs=tinysrgb&w=400'] },
+      { name: 'Honey', price: 150, stock: 25, category: 'Bakery', description: 'Pure natural honey', images: ['https://images.pexels.com/photos/1872902/pexels-photo-1872902.jpeg?auto=compress&cs=tinysrgb&w=400'] }
     ];
     const createdProducts = await Product.insertMany(products);
     console.log('Products created');

@@ -6,11 +6,21 @@ import { AuthService } from './auth.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private auth: AuthService) {}
+  constructor(private auth: AuthService) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Do not log cookies or sensitive data
-    const cloned = req.clone();
+    // Get token and attach to request
+    const token = this.auth.getToken();
+    let cloned = req;
+
+    if (token) {
+      cloned = req.clone({
+        setHeaders: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+    }
+
     return next.handle(cloned).pipe(
       catchError((err: HttpErrorResponse) => {
         // Centralized error handling: refresh user state on 401
@@ -22,3 +32,4 @@ export class AuthInterceptor implements HttpInterceptor {
     );
   }
 }
+

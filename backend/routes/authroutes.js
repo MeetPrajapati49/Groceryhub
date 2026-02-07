@@ -1,6 +1,7 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
+import { generateToken } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -16,9 +17,10 @@ router.post('/register', async (req, res) => {
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await User.create({ name, email, passwordHash });
 
-    // auto-login
+    // auto-login with session (backward compat) + JWT
     req.session.userId = user._id.toString();
-    res.json({ user: { id: user._id, name: user.name, email: user.email } });
+    const token = generateToken(user._id.toString());
+    res.json({ user: { id: user._id, name: user.name, email: user.email }, token });
   } catch (e) {
     console.error('Register error:', e);
     res.status(500).json({ error: 'register failed', details: e.message });
@@ -41,8 +43,8 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ error: 'login failed' });
       } else {
         req.session.userId = user._id.toString();
-        console.log("Session after login:", req.session);
-        res.json({ user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+        const token = generateToken(user._id.toString());
+        res.json({ user: { id: user._id, name: user.name, email: user.email, role: user.role }, token });
       }
     });
   } catch (e) {

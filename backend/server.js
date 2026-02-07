@@ -64,7 +64,8 @@ app.use(session({
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax"
+    // Must use "none" for cross-origin cookies (Vercel frontend ↔ Render backend)
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
   }
 }));
 

@@ -1,6 +1,6 @@
 import express from 'express';
 import StoreSettings from '../models/StoreSettings.js';
-import adminAuth from '../middleware/adminAuth.js';
+import { adminAuth } from '../middleware/auth.js';
 import crypto from 'crypto';
 
 const router = express.Router();

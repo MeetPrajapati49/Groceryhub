@@ -1,7 +1,7 @@
 import express from 'express';
 import InventoryLog from '../models/InventoryLog.js';
 import Product from '../models/Product.js';
-import adminAuth from '../middleware/adminAuth.js';
+import { adminAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 

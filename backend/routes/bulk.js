@@ -4,7 +4,7 @@ import csv from 'csv-parser';
 import { Readable } from 'stream';
 import Product from '../models/Product.js';
 import Category from '../models/Category.js';
-import adminAuth from '../middleware/adminAuth.js';
+import { adminAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 

@@ -1,6 +1,6 @@
 import express from 'express';
 import ActivityLog from '../models/ActivityLog.js';
-import adminAuth from '../middleware/adminAuth.js';
+import { adminAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 

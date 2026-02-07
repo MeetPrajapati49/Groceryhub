@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import Image from '../models/Image.js';
-import adminAuth from '../middleware/adminAuth.js';
+import { adminAuth } from '../middleware/auth.js';
 
 // Cloudinary imports - use if CLOUDINARY_CLOUD_NAME is set
 let cloudinaryStorage = null;

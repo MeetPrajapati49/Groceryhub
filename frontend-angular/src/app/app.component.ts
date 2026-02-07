@@ -3,6 +3,7 @@ import { ToastComponent } from './components/toast.component';
 
 @Component({
   selector: 'app-root',
+  standalone: true,
   template: `
     <app-header></app-header>
     <main class="container">

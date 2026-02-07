@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
 import { CartService } from '../../services/cart.service';
 import { WishlistService } from '../../services/wishlist.service';
+import { ToastService } from '../../services/toast.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -48,7 +49,14 @@ export class ProductDetailComponent implements OnInit {
   quantity = 1;
   mainImage: string = '/assets/placeholder.svg';
   mainImageLoading = false;
-  constructor(private route: ActivatedRoute, private productService: ProductService, private cart: CartService, private router: Router, private wishlist: WishlistService) { }
+  constructor(
+    private route: ActivatedRoute,
+    private productService: ProductService,
+    private cart: CartService,
+    private router: Router,
+    private wishlist: WishlistService,
+    private toast: ToastService
+  ) { }
   ngOnInit(): void {
     this.id = this.route.snapshot.paramMap.get('id');
     if (!this.id) { this.loading = false; return; }
@@ -57,20 +65,24 @@ export class ProductDetailComponent implements OnInit {
   addToCart() {
     if (!this.product) return;
     this.cart.add(this.product, this.quantity).subscribe({
-      next: () => alert('Added to cart'),
+      next: () => this.toast.success('Added to cart! 🛒'),
       error: (err) => {
         if (err.error === 'AUTH_REQUIRED' || err.status === 401) {
-          const shouldLogin = confirm('Please login to add items to your cart. Would you like to login now?');
-          if (shouldLogin) {
+          this.toast.warning('Please login to add items to cart');
+          setTimeout(() => {
             this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
-          }
+          }, 1500);
         } else {
-          alert('Failed to add to cart. Please try again.');
+          this.toast.error('Failed to add to cart. Please try again.');
         }
       }
     });
   }
-  addToWishlist() { if (!this.product) return; this.wishlist.add(this.product); alert('Added to wishlist'); }
+  addToWishlist() {
+    if (!this.product) return;
+    this.wishlist.add(this.product);
+    this.toast.success('Added to wishlist! ❤️');
+  }
   back() { this.router.navigate(['/']); }
 
   getImageSrc(img?: any) {
@@ -94,3 +106,4 @@ export class ProductDetailComponent implements OnInit {
     this.mainImage = src;
   }
 }
+

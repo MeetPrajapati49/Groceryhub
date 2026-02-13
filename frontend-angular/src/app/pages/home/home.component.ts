@@ -65,7 +65,19 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 <section class="products-section container">
   <h2 class="section-title">Featured</h2>
-  <div class="products-grid">
+
+  <!-- Skeleton loader — shows animated grey cards while API is loading -->
+  <div class="products-grid" *ngIf="loading">
+    <div class="skeleton-card" *ngFor="let i of [1,2,3,4]">
+      <div class="skeleton-image"></div>
+      <div class="skeleton-line wide"></div>
+      <div class="skeleton-line short"></div>
+      <div class="skeleton-line btn"></div>
+    </div>
+  </div>
+
+  <!-- Real products — only shown after API responds -->
+  <div class="products-grid" *ngIf="!loading">
     <div class="product-card" *ngFor="let product of products.slice(0,4)">
       <div class="discount-badge">20% OFF</div>
       <img [src]="getImageSrc(product.images)" alt="{{product.name}}" class="product-image" (error)="$event.target.src='/assets/placeholder.svg'" />
@@ -131,7 +143,7 @@ import { Router, ActivatedRoute } from '@angular/router';
       </ul>
     </div>
   </div>
-  <div class="footer-bottom">© 2025 GroceryHub. All rights reserved.</div>
+  <div class="footer-bottom">© 2026 GroceryHub. All rights reserved.</div>
 </footer>
   `,
   styleUrls: ['./home.component.css']
@@ -161,7 +173,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   countdownTimer: any = null;
   timeLeft = { hours: 23, minutes: 45, seconds: 30 };
 
-  constructor(private productService: ProductService, private router: Router, private route: ActivatedRoute) {}
+  constructor(private productService: ProductService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(q => {

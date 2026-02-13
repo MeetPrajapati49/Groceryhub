@@ -3,7 +3,7 @@ import { ApiService } from '../core/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService) { }
 
   products(params?: any) { return this.api.get('/products', params); }
   getProduct(id: string) { return this.api.get(`/products/${id}`); }
@@ -19,4 +19,7 @@ export class AdminService {
 
   orders(params?: any) { return this.api.get('/orders', params); }
   updateOrderStatus(id: string, status: string) { return this.api.put(`/orders/${id}/status`, { status }); }
+
+  // User stats — calls the existing /api/admin/users/stats/overview endpoint
+  userStats() { return this.api.get('/admin/users/stats/overview'); }
 }

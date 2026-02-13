@@ -88,8 +88,11 @@ export class AdminDashboardComponent implements OnInit {
       },
       error: () => { }
     });
-    // Approximate users count
-    this.stats.totalUsers = 21;
+    // Fetch real user count from the database
+    this.admin.userStats().subscribe({
+      next: (res: any) => { this.stats.totalUsers = res.totalUsers || 0; },
+      error: () => { this.stats.totalUsers = 0; }
+    });
   }
 
   go(path: string) { this.router.navigate([`/admin/${path}`]); }

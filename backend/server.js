@@ -26,6 +26,10 @@ import errorHandler from './middleware/errorHandler.js';
 dotenv.config();
 const app = express();
 
+// Trust first proxy (Render, Heroku, etc.) so express-rate-limit
+// can read the real client IP from X-Forwarded-For
+app.set('trust proxy', 1);
+
 // Security headers
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },

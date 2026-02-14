@@ -1,6 +1,16 @@
 import express from "express";
+import { body, validationResult } from 'express-validator';
 import Order from "../models/Order.js";
 import { authMiddleware, adminAuth } from "../middleware/auth.js";
+
+// Validation error handler
+const validate = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ error: errors.array()[0].msg });
+  }
+  next();
+};
 
 const router = express.Router();
 
@@ -62,23 +72,32 @@ router.get("/", adminAuth, async (req, res) => {
 // PUT update order status by ID (admin only)
 router.put("/:id/status", adminAuth, async (req, res) => {
   try {
-    const { status } = req.body;
+    const { status, note } = req.body;
     const validStatuses = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
 
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ error: "Invalid status" });
     }
 
-    const updatedOrder = await Order.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { new: true }
-    ).populate('userId', 'name email');
-
-    if (!updatedOrder) {
+    const order = await Order.findById(req.params.id).populate('userId', 'name email');
+    if (!order) {
       return res.status(404).json({ error: "Order not found" });
     }
-    res.json(updatedOrder);
+
+    order.status = status;
+    // Note is added via the pre-save hook's statusHistory push, but we can also manually add it
+    if (note) {
+      // We'll add the note after save since pre-save handles the push
+    }
+    await order.save();
+
+    // Add note to the last history entry if provided
+    if (note && order.statusHistory.length > 0) {
+      order.statusHistory[order.statusHistory.length - 1].note = note;
+      await order.save();
+    }
+
+    res.json(order);
   } catch (err) {
     res.status(400).json({ error: "Failed to update order status" });
   }
@@ -136,7 +155,15 @@ router.get("/:id", adminAuth, async (req, res) => {
 });
 
 // POST create new order (authenticated users)
-router.post("/", authMiddleware, async (req, res) => {
+router.post("/", authMiddleware, [
+  body('items').isArray({ min: 1 }).withMessage('At least one item is required'),
+  body('totalAmount').isFloat({ gt: 0 }).withMessage('Total amount must be greater than 0'),
+  body('deliveryAddress.street').trim().notEmpty().withMessage('Street address is required'),
+  body('deliveryAddress.city').trim().notEmpty().withMessage('City is required'),
+  body('deliveryAddress.state').trim().notEmpty().withMessage('State is required'),
+  body('deliveryAddress.pincode').trim().notEmpty().withMessage('Pincode is required'),
+  body('paymentMethod').trim().notEmpty().withMessage('Payment method is required')
+], validate, async (req, res) => {
   try {
     const { items, totalAmount, deliveryAddress, paymentMethod } = req.body;
 

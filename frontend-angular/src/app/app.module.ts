@@ -23,6 +23,7 @@ import { AdminOrdersComponent } from './admin/orders/orders.component';
 import { ProductDetailComponent } from './pages/product/product-detail.component';
 import { CategoryComponent } from './pages/category/category.component';
 import { WishlistComponent } from './pages/wishlist/wishlist.component';
+import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
 
 import { AuthInterceptor } from './core/auth.interceptor';
 import { ToastComponent } from './components/toast.component';
@@ -47,6 +48,7 @@ import { ToastComponent } from './components/toast.component';
     AdminOrdersComponent
     , ProductDetailComponent
     , WishlistComponent
+    , ForgotPasswordComponent
   ],
   imports: [
     BrowserModule,

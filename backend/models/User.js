@@ -19,6 +19,8 @@ const userSchema = new mongoose.Schema({
   lastLogin: { type: Date },
   mfaEnabled: { type: Boolean, default: false },
   mfaSecret: { type: String },
+  resetCode: { type: String },
+  resetCodeExpires: { type: Date },
   permissions: [{
     resource: String, // 'products', 'orders', 'customers', 'analytics'
     actions: [String] // 'read', 'write', 'delete'

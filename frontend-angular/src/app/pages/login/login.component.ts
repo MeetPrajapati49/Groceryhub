@@ -24,6 +24,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
         <button class="auth-button" type="submit" [disabled]="form.invalid">Login</button>
         <div *ngIf="error" class="error-message">{{error}}</div>
       </form>
+      <p style="margin-top:8px"><a routerLink="/forgot-password" style="color:#00A9A5;font-size:14px">Forgot Password?</a></p>
       <p style="margin-top:12px">Don't have an account? <a routerLink="/signup">Register here</a></p>
     </div>
   `

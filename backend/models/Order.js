@@ -11,6 +11,11 @@ const orderSchema = new mongoose.Schema({
   }],
   totalAmount: { type: Number, required: true },
   status: { type: String, enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'], default: 'Pending' },
+  statusHistory: [{
+    status: { type: String, required: true },
+    timestamp: { type: Date, default: Date.now },
+    note: { type: String }
+  }],
   deliveryAddress: {
     street: String,
     city: String,
@@ -21,5 +26,15 @@ const orderSchema = new mongoose.Schema({
   paymentMethod: { type: String, required: true },
   paymentStatus: { type: String, enum: ['Pending', 'Paid', 'Failed'], default: 'Pending' }
 }, { timestamps: true });
+
+// Auto-track status changes
+orderSchema.pre('save', function(next) {
+  if (this.isNew) {
+    this.statusHistory = [{ status: 'Pending', timestamp: new Date() }];
+  } else if (this.isModified('status')) {
+    this.statusHistory.push({ status: this.status, timestamp: new Date() });
+  }
+  next();
+});
 
 export default mongoose.model('Order', orderSchema);

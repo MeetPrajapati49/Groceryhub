@@ -16,6 +16,7 @@ import { AdminCategoryFormComponent } from './admin/categories/category-form.com
 import { AdminOrdersComponent } from './admin/orders/orders.component';
 import { CategoryComponent } from './pages/category/category.component';
 import { WishlistComponent } from './pages/wishlist/wishlist.component';
+import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -23,6 +24,7 @@ const routes: Routes = [
   { path: 'product/:id', loadComponent: () => import('./pages/product/product-detail.component').then(m => m.ProductDetailComponent) },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: RegisterComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'cart', component: CartComponent },
   { path: 'wishlist', component: WishlistComponent },
   { path: 'checkout', component: CheckoutComponent, canActivate: [AuthGuard] },
